@@ -1,0 +1,20 @@
+# Macos
+.DS_Store
+
+# Env vars
+.envrc
+
+# Vagrant
+.vagrant/
+
+# Generated
+tmp/
+*.log
+
+# Downloaded
+*.tar.gz
+*.zip
+
+# Editors
+.idea/
+.vscode/

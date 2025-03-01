@@ -1,0 +1,54 @@
+services:
+  n8n:
+    image: docker.n8n.io/n8nio/n8n:stable
+    container_name: n8n
+    restart: unless-stopped
+    ports:
+      - "5678:5678"
+    volumes:
+      - $DATA_DIRECTORY/n8n:/home/node/.n8n
+    environment:
+      - DB_TYPE=postgresdb
+      - DB_POSTGRESDB_DATABASE=n8n
+      - DB_POSTGRESDB_HOST=n8n-db
+      - DB_POSTGRESDB_PORT=5433
+      - DB_POSTGRESDB_USER=n8n
+      - DB_POSTGRESDB_SCHEMA=n8n
+      - DB_POSTGRESDB_PASSWORD=$N8N_DB_PASSWORD
+  
+  n8n-db:
+    image: postgres:14.17
+    container_name: n8n-db
+    restart: always
+    ports:
+      - "5433:5432"
+    environment:
+      - POSTGRES_USER=n8n
+      - POSTGRES_PASSWORD=$N8N_DB_PASSWORD
+      - POSTGRES_DB=n8n
+    volumes:
+      - $DATA_DIRECTORY/n8n-db/data:/var/lib/postgresql/data
+
+  open-webui:
+    image: ghcr.io/open-webui/open-webui:main
+    container_name: open-webui
+    restart: unless-stopped
+    environment:
+      - TZ=$TIMEZONE
+    volumes:
+      - $DATA_DIRECTORY/open-webui/data:/app/backend/data
+    ports:
+      - "9090:8080"
+    extra_hosts:
+      - host.docker.internal:host-gateway
+
+  open-webui-pipelines:
+    image: ghcr.io/open-webui/pipelines:main
+    container_name: open-webui-pipelines
+    restart: unless-stopped
+    volumes:
+      - $DATA_DIRECTORY/open-webui-pipelines:/app/pipelines
+    ports:
+      - "9099:9099"
+    extra_hosts:
+      - host.docker.internal:host-gateway

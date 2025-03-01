@@ -1,0 +1,3 @@
+DATA_DIRECTORY=/tmp/ai-home-lab/data
+TIMEZONE=Etc/UTC
+N8N_DB_PASSWORD=some-secure-password
